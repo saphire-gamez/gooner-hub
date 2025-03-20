@@ -6,10 +6,9 @@ local isGameDetected = false -- Flag to check if the game is detected
 
 if game.PlaceId == 155615604 then
     Window = OrionLib:MakeWindow({Name = "Prison Life - gooner hub", HidePremium = false, SaveConfig = true, ConfigFolder = "PrisonLifeHub"})
-
     isGameDetected = true
     
-    -- MAIN Tab
+    -- MAIN Tab for Prison Life
     local Main = Window:MakeTab({
         Name = "Main",
         Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
@@ -52,19 +51,19 @@ if game.PlaceId == 155615604 then
         end
     })
     
+    
 elseif game.PlaceId == 3956818381 then
     Window = OrionLib:MakeWindow({Name = "Ninja Legends - gooner hub", HidePremium = false, SaveConfig = true, ConfigFolder = "NinjaLegendsHub"})
-    
     isGameDetected = true
-
-    -- MAIN Tab
+    
+    -- MAIN Tab for Ninja Legends
     local Main = Window:MakeTab({
         Name = "Main",
         Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
         PremiumOnly = false
     })
 
-    -- Auto Swing Toggle
+-- Auto Swing Toggle
     Main:AddToggle({
         Name = "Auto Swing",
         Default = false,
@@ -147,8 +146,181 @@ elseif game.PlaceId == 3956818381 then
     })
 end
 
--- Universal Part
-if not isGameDetected then
+
+elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId == 130207304381701 then
+    Window = OrionLib:MakeWindow({Name = "Shrimp Game - gooner hub", HidePremium = false, SaveConfig = true, ConfigFolder = "ShrimpGameHub"})
+    isGameDetected = true
+
+    -- MAIN Tab for Shrimp Game
+    local ShrimpMain = Window:MakeTab({
+        Name = "Shrimp Game",
+        Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+        PremiumOnly = false
+    })
+
+    -- Notify function
+    local function notify(title, message)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = title,
+            Text = message
+        })
+    end
+
+    local hide_cutscenes_state = true
+    local auto_room_state = false
+    local notifications_state = true
+    local teleport_to_another = true
+    local cookie_shape_state = false
+    local cookie_shape_value = 2
+    local skip_dalgona = false
+    local six_legged_pentathlon = false
+    local pentathlon_skip = false
+
+    -- Setting up toggles
+    ShrimpMain:AddToggle({
+        Name = "Hide Cutscenes",
+        Default = true,
+        Callback = function(state)
+            hide_cutscenes_state = state
+        end
+    })
+
+    ShrimpMain:AddToggle({
+        Name = "Auto Room",
+        Default = false,
+        Callback = function(state)
+            auto_room_state = state
+        end
+    })
+
+    ShrimpMain:AddToggle({
+        Name = "Skip Dalgona",
+        Default = false,
+        Callback = function(state)
+            skip_dalgona = state
+        end
+    })
+
+    ShrimpMain:AddToggle({
+        Name = "Cookie Shape",
+        Default = false,
+        Callback = function(state)
+            cookie_shape_state = state
+        end
+    })
+
+    -- Cookie Shape Dropdown
+    local cookie_shapes = {"Circle", "Triangle", "Star", "Umbrella", "Mona Lisa"}
+    ShrimpMain:AddDropdown({
+        Name = "Cookie Shape",
+        Options = cookie_shapes,
+        Callback = function(selectedShape)
+            cookie_shape_value = (selectedShape == "Circle" and 1) or 
+                                (selectedShape == "Triangle" and 2) or 
+                                (selectedShape == "Star" and 3) or 
+                                (selectedShape == "Umbrella" and 4) or 
+                                (selectedShape == "Mona Lisa" and 5)
+        end
+    })
+
+    -- Red Light Green Light Button
+    ShrimpMain:AddButton({
+        Name = "Win Red Light Green Light",
+        Callback = function()
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.LightGameBlocker, 0)
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.LightGameBlocker, 1)
+        end
+    })
+
+    -- Remove unsafe steps button for Stepping Stones
+    ShrimpMain:AddButton({
+        Name = "Remove Unsafe Steps",
+        Callback = function()
+            for _, v in pairs(workspace.SteppingStones.Tiles:GetChildren()) do
+                for i = 1, 5 do
+                    spawn(function()
+                        pcall(function()
+                            local step = v:GetChildren()[1]
+                            local req = game:GetService("ReplicatedStorage").Remotes.Functions.GlassTester:InvokeServer(step)
+                            if req == "safe" then
+                                local ostep = v:GetChildren()[2]
+                                ostep:Destroy()
+                            elseif req == "unsafe" then
+                                step:Destroy()
+                            end
+                        end)
+                    end)
+                end
+            end
+        end
+    })
+
+    -- Win Steps Button
+    ShrimpMain:AddButton({
+        Name = "Win Steps (use after remove)",
+        Callback = function()
+            for _, v in pairs(workspace.SteppingStones.Tiles:GetChildren()) do
+                if #v:GetChildren() == 1 then
+                    local step = v:GetChildren()[1]
+                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, step, 0)
+                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, step, 1)
+                end
+                wait(0.1)
+            end
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Maps["Stepping Stones"].End.Build.SteppingStonesGate.Barrier.CFrame + Vector3.new(-10, -6, 0)
+        end
+    })
+
+    -- Setting up the MiniGames' Execution Loop
+    getrenv().pentathlon_s = function(args)
+        if args[2] == "Start Game" then
+            six_legged_pentathlon = true
+            spawn(function()
+                while task.wait() and six_legged_pentathlon do
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Start Minigame", 1)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Minigame Complete", "Ddakji")
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Throw Envelope", 60)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Start Minigame", 2)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Throw Stone", 60)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Minigame Complete", "Biseokchigi")
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Start Minigame", 3)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Minigame Complete", "Gonggi")
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Start Minigame", 4)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Throw Spinning Top", 60)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Start Minigame", 5)
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Minigame Complete", "Jegi")
+                    game:GetService("ReplicatedStorage").Remotes.Events.EffectsEvent:FireServer("Pentathlon Complete")
+                end
+            end)
+        elseif args[2] == "Stop Game" then
+            six_legged_pentathlon = false
+            -- Logic to stop game...
+        end
+    end
+
+    -- Teleport Dropdown for Shrimp Game
+    local convert_teleport_table = {
+        Lobby = CFrame.new(-138, 7, -59),
+        ["Red Light Green Light"] = CFrame.new(142, 4, 164),
+        Honeycombs = CFrame.new(-428, 4, 88),
+        Mingle = CFrame.new(1160, 8, -81),
+        ["Tug of War"] = CFrame.new(-1772, -52, -64),
+        ["Stepping Stones"] = CFrame.new(775, 52, -1852),
+        ["Squid Game"] = CFrame.new(336, 4, 255),
+        Marbles = CFrame.new(-1596, -70, 773),
+        ["Six Legged Pentathlon"] = CFrame.new(-167, 8, -565),
+        ["Piggy Bank"] = CFrame.new(-77, 20, -58)
+    }
+    
+    ShrimpMain:AddDropdown({
+        Name = "Teleport",
+        Options = {"Lobby", "Red Light Green Light", "Honeycombs", "Mingle", "Tug of War", "Stepping Stones", "Squid Game", "Marbles", "Six Legged Pentathlon", "Piggy Bank"},
+        Callback = function(teleportLocation)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = convert_teleport_table[teleportLocation]
+        end
+    })
+
+else
     Window = OrionLib:MakeWindow({Name = "Universal - gooner hub", HidePremium = false, SaveConfig = true, ConfigFolder = "UniversalHub"})
 end
 
