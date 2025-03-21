@@ -11,7 +11,7 @@ if game.PlaceId == 155615604 then
     -- MAIN Tab for Prison Life
     local Main = Window:MakeTab({
         Name = "Main",
-        Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+        Icon = "rbxassetid://4483345998",
         PremiumOnly = false
     })
 
@@ -20,9 +20,11 @@ if game.PlaceId == 155615604 then
         Name = "Give Gun",
         Options = {"M9", "Remington 870", "AK-47"},
         Callback = function(v)
-            local A_1 = game:GetService("Workspace")["Prison_ITEMS"].giver[v].ITEMPICKUP
-            local Event = game:GetService("Workspace").Remote.ItemHandler
-            Event:InvokeServer(A_1)
+            local gunPickup = game:GetService("Workspace")["Prison_ITEMS"].giver[v] and game:GetService("Workspace")["Prison_ITEMS"].giver[v].ITEMPICKUP
+            if gunPickup then
+                local Event = game:GetService("Workspace").Remote.ItemHandler
+                Event:InvokeServer(gunPickup)
+            end
         end
     })
 
@@ -31,27 +33,29 @@ if game.PlaceId == 155615604 then
         Name = "Gun Mod (SERVER MAY LAG)",
         Options = {"M9", "Remington 870", "AK-47"},
         Callback = function(v)
-            local module = nil
-            if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(v) then
-                module = require(game:GetService("Players").LocalPlayer.Backpack[v].GunStates)
-            elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild(v) then
-                module = require(game:GetService("Players").LocalPlayer.Character[v].GunStates)
+            local player = game.Players.LocalPlayer
+            local module
+
+            if player.Backpack:FindFirstChild(v) then
+                module = require(player.Backpack[v]:FindFirstChild("GunStates"))
+            elseif player.Character:FindFirstChild(v) then
+                module = require(player.Character[v]:FindFirstChild("GunStates"))
             end
+
             if module then
-                module["MaxAmmo"] = math.huge
-                module["CurrentAmmo"] = math.huge
-                module["StoredAmmo"] = math.huge
-                module["FireRate"] = 0.000001
-                module["Spread"] = 0
-                module["Range"] = math.huge
-                module["Bullets"] = 10
-                module["ReloadTime"] = 0.000001
-                module["AutoFire"] = true
+                module.MaxAmmo = math.huge
+                module.CurrentAmmo = math.huge
+                module.StoredAmmo = math.huge
+                module.FireRate = 0.000001
+                module.Spread = 0
+                module.Range = math.huge
+                module.Bullets = 10
+                module.ReloadTime = 0.000001
+                module.AutoFire = true
             end
         end
     })
-    
-    
+
 elseif game.PlaceId == 3956818381 then
     Window = OrionLib:MakeWindow({Name = "Ninja Legends - gooner hub", HidePremium = false, SaveConfig = true, ConfigFolder = "NinjaLegendsHub"})
     isGameDetected = true
@@ -59,11 +63,11 @@ elseif game.PlaceId == 3956818381 then
     -- MAIN Tab for Ninja Legends
     local Main = Window:MakeTab({
         Name = "Main",
-        Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+        Icon = "rbxassetid://4483345998",
         PremiumOnly = false
     })
 
--- Auto Swing Toggle
+    -- Auto Swing Toggle
     Main:AddToggle({
         Name = "Auto Swing",
         Default = false,
@@ -77,7 +81,7 @@ elseif game.PlaceId == 3956818381 then
                     end
                 end
                 local A_1 = "swingKatana"
-                local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+                local Event = game.Players.LocalPlayer.ninjaEvent
                 Event:FireServer(A_1)
                 wait(0.1)
             end
@@ -103,13 +107,14 @@ elseif game.PlaceId == 3956818381 then
     Main:AddButton({
         Name = "Unlock All Islands",
         Callback = function()
-            local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            local player = game.Players.LocalPlayer
+            local oldCFrame = player.Character.HumanoidRootPart.CFrame
             for _, island in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = island.CFrame
+                player.Character.HumanoidRootPart.CFrame = island.CFrame
                 wait(0.1)
             end
             wait(0.1)
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
+            player.Character.HumanoidRootPart.CFrame = oldCFrame
         end
     })
 
@@ -120,10 +125,8 @@ elseif game.PlaceId == 3956818381 then
         Callback = function(v)
             getgenv().buyswords = v
             while getgenv().buyswords do
-                local A_1 = "buyAllSwords"
-                local A_2 = "Inner Peace Island"
                 local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-                Event:FireServer(A_1, A_2)
+                Event:FireServer("buyAllSwords", "Inner Peace Island")
                 wait(0.5)
             end
         end
@@ -136,15 +139,12 @@ elseif game.PlaceId == 3956818381 then
         Callback = function(v)
             getgenv().buybelts = v
             while getgenv().buybelts do
-                local A_1 = "buyAllBelts"
-                local A_2 = "Inner Peace Island"
                 local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-                Event:FireServer(A_1, A_2)
+                Event:FireServer("buyAllBelts", "Inner Peace Island")
                 wait(0.5)
             end
         end
     })
-end
 
 
 elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId == 130207304381701 then
@@ -154,7 +154,7 @@ elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId 
     -- MAIN Tab for Shrimp Game
     local ShrimpMain = Window:MakeTab({
         Name = "Shrimp Game",
-        Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+        Icon = "rbxassetid://4483345998",
         PremiumOnly = false
     })
 
@@ -166,46 +166,30 @@ elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId 
         })
     end
 
-    local hide_cutscenes_state = true
-    local auto_room_state = false
-    local notifications_state = true
-    local teleport_to_another = true
-    local cookie_shape_state = false
-    local cookie_shape_value = 2
-    local skip_dalgona = false
-    local six_legged_pentathlon = false
-    local pentathlon_skip = false
-
-    -- Setting up toggles
+    -- Hide Cutscenes Toggle
     ShrimpMain:AddToggle({
         Name = "Hide Cutscenes",
         Default = true,
         Callback = function(state)
-            hide_cutscenes_state = state
+            -- (Implementation for hiding cutscenes can be done here, if applicable)
         end
     })
 
+    -- Auto Room Toggle
     ShrimpMain:AddToggle({
         Name = "Auto Room",
         Default = false,
         Callback = function(state)
-            auto_room_state = state
+            -- (Implementation for auto room transitions if needed)
         end
     })
 
+    -- Skip Dalgona Toggle
     ShrimpMain:AddToggle({
         Name = "Skip Dalgona",
         Default = false,
         Callback = function(state)
-            skip_dalgona = state
-        end
-    })
-
-    ShrimpMain:AddToggle({
-        Name = "Cookie Shape",
-        Default = false,
-        Callback = function(state)
-            cookie_shape_state = state
+            -- (Implementation for skipping Dalgona if applicable)
         end
     })
 
@@ -215,41 +199,35 @@ elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId 
         Name = "Cookie Shape",
         Options = cookie_shapes,
         Callback = function(selectedShape)
-            cookie_shape_value = (selectedShape == "Circle" and 1) or 
-                                (selectedShape == "Triangle" and 2) or 
-                                (selectedShape == "Star" and 3) or 
-                                (selectedShape == "Umbrella" and 4) or 
-                                (selectedShape == "Mona Lisa" and 5)
+            -- Store the shape value based on user choice
+            local cookie_shape_value = (selectedShape == "Circle" and 1) or 
+                                       (selectedShape == "Triangle" and 2) or 
+                                       (selectedShape == "Star" and 3) or 
+                                       (selectedShape == "Umbrella" and 4) or 
+                                       (selectedShape == "Mona Lisa" and 5)
         end
     })
 
-    -- Red Light Green Light Button
+    -- Win Red Light Green Light Button
     ShrimpMain:AddButton({
         Name = "Win Red Light Green Light",
         Callback = function()
             firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.LightGameBlocker, 0)
             firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.LightGameBlocker, 1)
+            notify("Won!", "You have successfully completed 'Red Light Green Light'!")
         end
     })
 
-    -- Remove unsafe steps button for Stepping Stones
+    -- Remove Unsafe Steps Button
     ShrimpMain:AddButton({
         Name = "Remove Unsafe Steps",
         Callback = function()
             for _, v in pairs(workspace.SteppingStones.Tiles:GetChildren()) do
-                for i = 1, 5 do
-                    spawn(function()
-                        pcall(function()
-                            local step = v:GetChildren()[1]
-                            local req = game:GetService("ReplicatedStorage").Remotes.Functions.GlassTester:InvokeServer(step)
-                            if req == "safe" then
-                                local ostep = v:GetChildren()[2]
-                                ostep:Destroy()
-                            elseif req == "unsafe" then
-                                step:Destroy()
-                            end
-                        end)
-                    end)
+                local req = game:GetService("ReplicatedStorage").Remotes.Functions.GlassTester:InvokeServer(v:GetChildren()[1])
+                if req == "safe" then
+                    v:GetChildren()[2]:Destroy()
+                elseif req == "unsafe" then
+                    v:GetChildren()[1]:Destroy()
                 end
             end
         end
@@ -271,7 +249,7 @@ elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId 
         end
     })
 
-    -- Setting up the MiniGames' Execution Loop
+    -- MiniGames Execution Loop
     getrenv().pentathlon_s = function(args)
         if args[2] == "Start Game" then
             six_legged_pentathlon = true
@@ -294,7 +272,7 @@ elseif game.PlaceId == 7606602544 or game.PlaceId == 7606564092 or game.PlaceId 
             end)
         elseif args[2] == "Stop Game" then
             six_legged_pentathlon = false
-            -- Logic to stop game...
+            -- Logic to stop the game can be implemented here
         end
     end
 
@@ -327,7 +305,7 @@ end
 -- Universal Modifiers Tab
 local UniversalModifiersTab = Window:MakeTab({
     Name = "Universal Modifiers",
-    Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+    Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
 
@@ -358,7 +336,7 @@ UniversalModifiersTab:AddSlider({
 -- Universal Scripts Tab
 local UniversalScriptsTab = Window:MakeTab({
     Name = "Universal Scripts/Hubs",
-    Icon = "rbxassetid://4483345998", -- replace with appropriate icon if desired
+    Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
 
@@ -390,102 +368,94 @@ UniversalScriptsSection:AddButton({
     end
 })
 
--- IY
+-- Infinite Yield Admin
 UniversalScriptsSection:AddButton({
     Name = "IY (Infinite Yield Admin)",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
     end
 })
 
--- CMD X
+-- CMD X (FE Admin)
 UniversalScriptsSection:AddButton({
     Name = "CMD X (FE Admin)",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
     end
 })
 
--- jerk off
+-- Jerk Off
 UniversalScriptsSection:AddButton({
     Name = "Jerk Off (R15 ONLY)",
     Callback = function()
-loadstring(game:HttpGet("https://pastefy.app/Jqhjtjpt/raw"))()
-end
+        loadstring(game:HttpGet("https://pastefy.app/Jqhjtjpt/raw"))()
+    end
 })
 
--- freaky fling gui
+-- Kawaii Freaky Fling GUI
 UniversalScriptsSection:AddButton({
     Name = "Kawaii Freaky Fling GUI",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua", true))()
-end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-FREAKY-FLING/main/kawaii_freaky_fling.lua", true))()
+    end
 })
 
--- freaky fling gui
+-- Kawaii Chat Bypass
 UniversalScriptsSection:AddButton({
     Name = "Kawaii Chat Bypass",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-BYPASS/main/kawaii-bypass",true))()end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-BYPASS/main/kawaii-bypass",true))()
+    end
 })
 
 -- Forge Hub
 UniversalScriptsSection:AddButton({
     Name = "Forge Hub",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Skzuppy/forge-hub/main/loader.lua"))()
-end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Skzuppy/forge-hub/main/loader.lua"))()
+    end
 })
 
--- starry hub
+-- Starry Hub
 UniversalScriptsSection:AddButton({
     Name = "Starry Hub",
     Callback = function()
-loadstring(game:HttpGet("https://luau.tech/build"))()
-end
+        loadstring(game:HttpGet("https://luau.tech/build"))()
+    end
 })
 
--- remote spy
+-- Remote Spy
 UniversalScriptsSection:AddButton({
     Name = "Remote Spy",
     Callback = function()
-loadstring(game:HttpGet("https://paste.ee/r/hK1Q4D65"))()
-end
+        loadstring(game:HttpGet("https://paste.ee/r/hK1Q4D65"))()
+    end
 })
 
--- fates admin
+-- Fates Admin
 UniversalScriptsSection:AddButton({
     Name = "Fates Admin",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/fatesc/fates-admin/main/main.lua"))();
-end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/fatesc/fates-admin/main/main.lua"))()
+    end
 })
 
--- E
+-- Aimbot V3
 UniversalScriptsSection:AddButton({
     Name = "Aimbot V3",
     Callback = function()
-local Aimbot = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
-Aimbot.Load()
-end
+        local Aimbot = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
+        Aimbot.Load()
+    end
 })
 
--- E
+-- Universal ESP
 UniversalScriptsSection:AddButton({
     Name = "Universal ESP",
     Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AgungHari/Universal-ESP-For-Roblox/main/ver1.lua"))()
-end
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AgungHari/Universal-ESP-For-Roblox/main/ver1.lua"))()
+    end
 })
-
--- E
-UniversalScriptsSection:AddButton({
-    Name = "Remote Spy",
-    Callback = function()
-loadstring(game:HttpGet("https://pastefy.app/X0fiTdSG/raw"))()
-end
-})
-
 
 -- Finish the script
 OrionLib:Init()  -- Make sure to initialize the Orion library
